@@ -1,0 +1,125 @@
+<%- include('../layouts/topo') %>
+
+<section class="bg-dark text-white rounded-3 p-4 p-md-5 mb-5 shadow" data-bs-theme="dark">
+  <div class="col-lg-8">
+    <p class="text-warning text-uppercase fw-bold small mb-2">Palco Aberto</p>
+    <h1 class="display-4 fw-bold mb-3">Programação cultural</h1>
+    <p class="lead text-white-50 mb-4">Consulte os próximos eventos, os horários das apresentações e os artistas de cada noite.</p>
+    <div class="d-grid gap-2 d-sm-flex">
+      <% if (destaque) { %>
+        <a class="btn btn-warning btn-lg fw-semibold" href="/eventos/<%= destaque.id %>">Ver programação</a>
+      <% } %>
+      <a class="btn btn-outline-light btn-lg" href="/participantes">Conhecer os participantes</a>
+    </div>
+  </div>
+</section>
+
+<% if (!destaque) { %>
+  <div class="alert alert-secondary mb-5">Nenhum evento programado no momento.</div>
+<% } else { %>
+  <% const data = partesData(destaque.data); %>
+  <section class="mb-5" aria-labelledby="titulo-destaque">
+    <h2 id="titulo-destaque" class="h4 mb-3"><%= destaque.data === hoje ? 'Acontece hoje' : 'Próximo evento' %></h2>
+    <div class="card border-0 shadow overflow-hidden">
+      <div class="row g-0">
+        <div class="col-md-3 bg-warning text-dark d-flex flex-column align-items-center justify-content-center text-center p-3 p-md-4">
+          <span class="text-uppercase fw-semibold small"><%= data.diaSemana %></span>
+          <span class="display-3 fw-bold lh-1 my-1"><%= data.dia %></span>
+          <span class="text-uppercase fw-bold fs-5"><%= data.mes %> <%= data.ano %></span>
+        </div>
+        <div class="col-md-9">
+          <div class="card-body p-4">
+            <h3 class="h2 fw-bold mb-1"><%= destaque.nome %></h3>
+            <p class="text-body-secondary mb-3"><%= destaque.local %></p>
+            <% if (destaque.descricao) { %>
+              <p class="mb-4"><%= destaque.descricao %></p>
+            <% } %>
+
+            <% if (situacao.tipo === 'hoje') { %>
+              <ul class="list-unstyled d-grid gap-2 mb-4">
+                <% if (situacao.atual) { %>
+                  <li class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="badge text-bg-danger text-uppercase">Agora</span>
+                    <span><strong><%= situacao.atual.participante_exibicao %></strong>, <%= situacao.atual.horario_inicio %> - <%= situacao.atual.horario_fim %>, <%= situacao.atual.palco %></span>
+                  </li>
+                <% } %>
+                <% if (situacao.proxima) { %>
+                  <li class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="badge text-bg-primary text-uppercase">Próxima</span>
+                    <span><strong><%= situacao.proxima.participante_exibicao %></strong>, <%= situacao.proxima.horario_inicio %> - <%= situacao.proxima.horario_fim %>, <%= situacao.proxima.palco %></span>
+                  </li>
+                <% } %>
+              </ul>
+            <% } else if (situacao.tipo === 'futura') { %>
+              <div class="d-flex flex-wrap gap-4 mb-4 text-body-secondary">
+                <span>Início às <strong class="text-body"><%= situacao.proxima.horario_inicio %></strong></span>
+                <span><strong class="text-body"><%= destaque.total_apresentacoes %></strong> <%= destaque.total_apresentacoes === 1 ? 'apresentação' : 'apresentações' %></span>
+              </div>
+            <% } else if (situacao.tipo === 'encerrada') { %>
+              <p class="text-body-secondary mb-4">A programação de hoje foi encerrada.</p>
+            <% } else { %>
+              <p class="text-body-secondary mb-4">A programação será divulgada em breve.</p>
+            <% } %>
+
+            <a class="btn btn-primary" href="/eventos/<%= destaque.id %>">Ver programação completa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<% if (outros.length) { %>
+  <section class="mb-5" aria-labelledby="titulo-outros">
+    <h2 id="titulo-outros" class="h4 mb-3">Mais eventos</h2>
+    <ul class="list-unstyled row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-0">
+      <% outros.forEach((evento) => { %>
+        <% const dataEvento = partesData(evento.data); %>
+        <li class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex gap-3">
+              <div class="bg-primary-subtle text-primary-emphasis rounded-3 text-center px-3 py-2 align-self-start flex-shrink-0">
+                <div class="fs-3 fw-bold lh-1"><%= dataEvento.dia %></div>
+                <div class="small text-uppercase fw-semibold"><%= dataEvento.mes %></div>
+              </div>
+              <div>
+                <% if (evento.data === hoje) { %>
+                  <span class="badge text-bg-danger mb-1">Hoje</span>
+                <% } %>
+                <h3 class="h5 mb-1">
+                  <a class="stretched-link link-body-emphasis link-underline-opacity-0 link-underline-opacity-100-hover" href="/eventos/<%= evento.id %>"><%= evento.nome %></a>
+                </h3>
+                <p class="text-body-secondary mb-1"><%= evento.local %></p>
+                <p class="small text-body-secondary mb-0">
+                  <%= dataEvento.diaSemana %>, <time datetime="<%= evento.data %>"><%= formatarData(evento.data) %></time>
+                </p>
+                <p class="small text-body-secondary mb-0">
+                  <%= evento.total_apresentacoes %> <%= evento.total_apresentacoes === 1 ? 'apresentação' : 'apresentações' %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+
+<% if (anteriores.length) { %>
+  <section class="mb-4" aria-labelledby="titulo-anteriores">
+    <h2 id="titulo-anteriores" class="h4 mb-3">Eventos anteriores</h2>
+    <div class="list-group shadow-sm">
+      <% anteriores.forEach((evento) => { %>
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3 py-3" href="/eventos/<%= evento.id %>">
+          <span>
+            <span class="d-block fw-semibold text-body-emphasis"><%= evento.nome %></span>
+            <span class="d-block small text-body-secondary"><%= evento.local %></span>
+          </span>
+          <time class="small text-body-secondary text-nowrap" datetime="<%= evento.data %>"><%= formatarData(evento.data) %></time>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+<%- include('../layouts/rodape') %>

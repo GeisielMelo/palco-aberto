@@ -1,0 +1,34 @@
+<%- include('../layouts/topo') %>
+
+<h1 class="display-6 fw-bold">Participantes</h1>
+<p class="lead text-body-secondary mb-4">Conheça os artistas que fazem parte da programação.</p>
+
+<% if (participantes.length === 0) { %>
+  <div class="alert alert-secondary">Nenhum participante cadastrado.</div>
+<% } else { %>
+  <ul class="list-unstyled row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mb-0">
+    <% participantes.forEach((participante) => { %>
+      <li class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-3">
+                <div class="ratio ratio-1x1">
+                  <span class="d-flex align-items-center justify-content-center rounded-circle bg-dark text-warning fw-bold fs-5" aria-hidden="true"><%= iniciais(nomeExibicao(participante)) %></span>
+                </div>
+              </div>
+              <div class="col-9">
+                <h2 class="h5 mb-1">
+                  <a class="stretched-link link-body-emphasis link-underline-opacity-0 link-underline-opacity-100-hover" href="/participantes/<%= participante.id %>"><%= nomeExibicao(participante) %></a>
+                </h2>
+                <p class="text-body-secondary mb-0"><%= participante.categoria %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('../layouts/rodape') %>

@@ -1,0 +1,41 @@
+<%- include('../layouts/topo') %>
+
+<div class="row justify-content-center">
+  <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+    <div class="card border-0 shadow">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span class="d-inline-flex align-items-center justify-content-center bg-warning text-dark rounded-3 px-3 py-2 fs-3 mb-3" aria-hidden="true">
+            <i class="bi bi-mic-fill"></i>
+          </span>
+          <h1 class="h3 fw-bold mb-1">Entrar</h1>
+          <p class="text-body-secondary mb-0">Acesse a sua conta do Palco Aberto.</p>
+        </div>
+
+        <%- include('../partials/erros') %>
+
+        <form method="post" action="/entrar">
+          <input type="hidden" name="destino" value="<%= destino %>">
+
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">E-mail</label>
+            <input id="email" name="email" type="email" class="form-control" autocomplete="email" required value="<%= valores.email || '' %>">
+          </div>
+
+          <div class="mb-4">
+            <label for="senha" class="form-label fw-semibold">Senha</label>
+            <input id="senha" name="senha" type="password" class="form-control" autocomplete="current-password" required>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+          </div>
+        </form>
+
+        <p class="text-center border-top pt-4 mt-4 mb-0">Ainda não tem conta? <a href="/cadastro">Crie a sua agora</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/rodape') %>

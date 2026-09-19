@@ -1,0 +1,56 @@
+<%- include('../../layouts/topo') %>
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+  <h1 class="mb-0">Eventos</h1>
+  <a class="btn btn-primary" href="/admin/eventos/novo">Novo evento</a>
+</div>
+
+<% if (eventos.length === 0) { %>
+  <div class="alert alert-secondary">Nenhum evento cadastrado.</div>
+<% } else { %>
+  <div class="card shadow-sm">
+    <div class="table-responsive" role="region" aria-labelledby="legenda-eventos" tabindex="0">
+      <table class="table table-hover align-middle mb-0">
+        <caption id="legenda-eventos" class="visually-hidden">Lista de eventos cadastrados</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col" class="d-none d-md-table-cell">Data</th>
+            <th scope="col" class="d-none d-lg-table-cell">Local</th>
+            <th scope="col" class="d-none d-md-table-cell">Apresentações</th>
+            <th scope="col" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% eventos.forEach((evento) => { %>
+            <tr>
+              <td>
+                <a href="/eventos/<%= evento.id %>"><%= evento.nome %></a>
+                <div class="small text-body-secondary d-lg-none">
+                  <span class="d-md-none"><%= formatarData(evento.data) %>, </span><%= evento.local %>
+                </div>
+              </td>
+              <td class="d-none d-md-table-cell text-nowrap"><%= formatarData(evento.data) %></td>
+              <td class="d-none d-lg-table-cell"><%= evento.local %></td>
+              <td class="d-none d-md-table-cell"><%= evento.total_apresentacoes %></td>
+              <td>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                  <a class="btn btn-outline-primary btn-sm" href="/admin/eventos/<%= evento.id %>/editar">
+                    Editar<span class="visually-hidden"> <%= evento.nome %></span>
+                  </a>
+                  <form class="m-0" method="post" action="/admin/eventos/<%= evento.id %>/excluir" data-confirmar="Deseja excluir o evento <%= evento.nome %>?">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      Excluir<span class="visually-hidden"> <%= evento.nome %></span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../../layouts/rodape') %>

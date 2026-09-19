@@ -1,0 +1,92 @@
+<%- include('../layouts/topo') %>
+
+<h1 class="mb-1">Minha conta</h1>
+<p class="lead text-body-secondary mb-4">Olá, <%= usuario.nome %>.</p>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <section class="card shadow-sm" aria-labelledby="titulo-dados">
+      <div class="card-body">
+        <h2 id="titulo-dados" class="h5 mb-3">Seus dados</h2>
+        <dl class="mb-0">
+          <dt>Nome</dt>
+          <dd><%= usuario.nome %></dd>
+          <dt>E-mail</dt>
+          <dd class="text-break"><%= usuario.email %></dd>
+          <dt>Papel</dt>
+          <dd class="mb-0"><%- include('../partials/papel', { papel: usuario.papel }) %></dd>
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <div class="col-lg-8">
+    <% if (usuario.papel === PAPEIS.ADMIN) { %>
+      <section class="card shadow-sm" aria-labelledby="titulo-admin">
+        <div class="card-body p-4">
+          <h2 id="titulo-admin" class="h5 mb-2">Administração</h2>
+          <p class="text-body-secondary">Você pode gerenciar eventos, participantes, apresentações e o acesso dos usuários.</p>
+          <a class="btn btn-primary" href="/admin">Acessar o painel</a>
+        </div>
+      </section>
+    <% } else if (perfil) { %>
+      <section class="card shadow-sm mb-4" aria-labelledby="titulo-perfil">
+        <div class="card-body p-4">
+          <h2 id="titulo-perfil" class="h5 mb-3">Seu perfil de artista</h2>
+          <div class="row g-3 align-items-center mb-3">
+            <div class="col-3 col-sm-2">
+              <div class="ratio ratio-1x1">
+                <span class="d-flex align-items-center justify-content-center rounded-circle bg-dark text-warning fw-bold fs-5" aria-hidden="true"><%= iniciais(nomeExibicao(perfil)) %></span>
+              </div>
+            </div>
+            <div class="col">
+              <p class="h4 fw-bold mb-1"><%= nomeExibicao(perfil) %></p>
+              <span class="badge rounded-pill text-bg-primary"><%= perfil.categoria %></span>
+            </div>
+          </div>
+          <div class="d-grid gap-2 d-sm-flex">
+            <a class="btn btn-primary" href="/conta/perfil">Editar perfil</a>
+            <a class="btn btn-outline-secondary" href="/participantes/<%= perfil.id %>">Ver página pública</a>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="titulo-apresentacoes">
+        <h2 id="titulo-apresentacoes" class="h5 mb-3">Suas apresentações</h2>
+        <% if (apresentacoes.length === 0) { %>
+          <div class="alert alert-secondary">Você ainda não tem apresentações na programação. A equipe do evento define os horários e o palco.</div>
+        <% } else { %>
+          <ul class="list-unstyled d-grid gap-3 mb-0">
+            <% apresentacoes.forEach((item) => { %>
+              <li class="card shadow-sm border-0 border-start border-4 <%= item.evento_data < hoje ? 'border-secondary' : 'border-primary' %>">
+                <div class="card-body">
+                  <p class="mb-1">
+                    <time class="fw-bold text-primary-emphasis me-2" datetime="<%= item.evento_data %>"><%= formatarData(item.evento_data) %></time>
+                    <span class="fw-semibold"><time><%= item.horario_inicio %></time> - <time><%= item.horario_fim %></time></span>
+                    <% if (item.evento_data < hoje) { %>
+                      <span class="badge text-bg-secondary ms-1">Realizada</span>
+                    <% } %>
+                  </p>
+                  <h3 class="h6 mb-1">
+                    <a class="link-body-emphasis" href="/eventos/<%= item.evento_id %>"><%= item.evento_nome %></a>
+                  </h3>
+                  <p class="small text-body-secondary mb-0"><%= item.evento_local %>, <%= item.palco %></p>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    <% } else { %>
+      <section class="card shadow-sm border-warning" aria-labelledby="titulo-convite">
+        <div class="card-body p-4">
+          <h2 id="titulo-convite" class="h5 mb-2">Quer se apresentar?</h2>
+          <p class="text-body-secondary">Crie o seu perfil de artista para aparecer na lista de participantes. Depois disso, a equipe do evento pode incluir você na programação.</p>
+          <a class="btn btn-warning fw-semibold" href="/conta/perfil">Criar perfil de artista</a>
+        </div>
+      </section>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../layouts/rodape') %>

@@ -1,0 +1,10 @@
+<% if (erros && erros.length) { %>
+  <div class="alert alert-danger" role="alert">
+    <p class="fw-bold mb-2">Corrija os itens abaixo para continuar:</p>
+    <ul class="mb-0">
+      <% erros.forEach((mensagem) => { %>
+        <li><%= mensagem %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>

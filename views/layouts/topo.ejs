@@ -1,0 +1,136 @@
+<%
+  const ehAdmin = Boolean(usuario) && usuario.papel === PAPEIS.ADMIN;
+  const podeTerPerfil = Boolean(usuario) && usuario.papel !== PAPEIS.ADMIN;
+  const itensPrincipais = [
+    { texto: 'Eventos', href: '/', icone: 'bi-calendar-event', ativo: caminho === '/' || caminho.startsWith('/eventos') },
+    { texto: 'Participantes', href: '/participantes', icone: 'bi-people', ativo: caminho.startsWith('/participantes') },
+    ...(ehAdmin ? [{ texto: 'Administração', href: '/admin', icone: 'bi-speedometer2', ativo: area === 'admin' }] : [])
+  ];
+  const itensAdmin = [
+    { texto: 'Painel', href: '/admin', icone: 'bi-speedometer2', ativo: caminho === '/admin' },
+    { texto: 'Eventos', href: '/admin/eventos', icone: 'bi-calendar-event', ativo: caminho.startsWith('/admin/eventos') },
+    { texto: 'Participantes', href: '/admin/participantes', icone: 'bi-people', ativo: caminho.startsWith('/admin/participantes') },
+    { texto: 'Apresentações', href: '/admin/apresentacoes', icone: 'bi-music-note-list', ativo: caminho.startsWith('/admin/apresentacoes') },
+    { texto: 'Usuários', href: '/admin/usuarios', icone: 'bi-person-gear', ativo: caminho.startsWith('/admin/usuarios') }
+  ];
+-%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> | Palco Aberto</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+  <a class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-2 px-3 py-2 rounded bg-warning text-dark fw-bold" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="navbar navbar-expand-lg bg-dark sticky-top shadow-sm py-2" data-bs-theme="dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/">
+        <span class="d-inline-flex align-items-center justify-content-center bg-warning text-dark rounded-3 px-2 py-1" aria-hidden="true">
+          <i class="bi bi-mic-fill"></i>
+        </span>
+        Palco Aberto
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu-principal" aria-controls="menu-principal" aria-expanded="false" aria-label="Abrir menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="menu-principal">
+        <nav class="me-auto ms-lg-4" aria-label="Navegação principal">
+          <ul class="navbar-nav gap-lg-2">
+            <% itensPrincipais.forEach((item) => { %>
+              <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-2<%= item.ativo ? ' active fw-semibold' : '' %>" href="<%= item.href %>"<% if (item.ativo) { %> aria-current="page"<% } %>>
+                  <i class="bi <%= item.icone %>" aria-hidden="true"></i><%= item.texto %>
+                </a>
+              </li>
+            <% }) %>
+          </ul>
+        </nav>
+
+        <% if (usuario) { %>
+          <ul class="navbar-nav mt-2 mt-lg-0">
+            <li class="nav-item dropdown">
+              <button class="nav-link dropdown-toggle d-flex align-items-center gap-2<%= caminho.startsWith('/conta') ? ' active' : '' %>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5" aria-hidden="true"></i>
+                <span><%= usuario.nome.split(' ')[0] %></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li>
+                  <div class="dropdown-header">
+                    <span class="d-block fw-semibold text-body-emphasis"><%= usuario.nome %></span>
+                    <span class="d-block small text-truncate"><%= usuario.email %></span>
+                    <span class="d-inline-block mt-2"><%- include('../partials/papel', { papel: usuario.papel }) %></span>
+                  </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2" href="/conta">
+                    <i class="bi bi-person" aria-hidden="true"></i>Minha conta
+                  </a>
+                </li>
+                <% if (podeTerPerfil) { %>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2" href="/conta/perfil">
+                      <i class="bi bi-person-badge" aria-hidden="true"></i><%= usuario.participante_id ? 'Meu perfil de artista' : 'Criar perfil de artista' %>
+                    </a>
+                  </li>
+                <% } %>
+                <% if (ehAdmin) { %>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2" href="/admin">
+                      <i class="bi bi-speedometer2" aria-hidden="true"></i>Painel administrativo
+                    </a>
+                  </li>
+                <% } %>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="/sair" class="m-0">
+                    <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger-emphasis">
+                      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>Sair
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        <% } else { %>
+          <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+            <a class="btn btn-outline-light btn-sm d-inline-flex align-items-center justify-content-center gap-2" href="/entrar"<% if (caminho === '/entrar') { %> aria-current="page"<% } %>>
+              <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>Entrar
+            </a>
+            <a class="btn btn-warning btn-sm fw-semibold" href="/cadastro"<% if (caminho === '/cadastro') { %> aria-current="page"<% } %>>Criar conta</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </header>
+
+  <% if (area === 'admin' && ehAdmin) { %>
+    <nav id="menu-admin" class="bg-body border-bottom shadow-sm" aria-label="Seções da administração">
+      <div class="container d-flex align-items-center gap-4">
+        <span class="d-none d-md-inline small fw-bold text-uppercase text-body-secondary text-nowrap">Administração</span>
+        <ul class="nav nav-underline flex-nowrap overflow-x-auto text-nowrap">
+          <% itensAdmin.forEach((item) => { %>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 py-3<%= item.ativo ? ' active' : ' link-secondary' %>" href="<%= item.href %>"<% if (item.ativo) { %> aria-current="page"<% } %>>
+                <i class="bi <%= item.icone %>" aria-hidden="true"></i><%= item.texto %>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </nav>
+  <% } %>
+
+  <main id="conteudo" class="container flex-grow-1 py-4<%= locals.centralizar ? ' py-md-5 d-flex flex-column justify-content-center' : '' %>">
+    <% if (mensagemSucesso) { %>
+      <div class="alert alert-success" role="status"><%= mensagemSucesso %></div>
+    <% } %>
+    <% if (mensagemErro) { %>
+      <div class="alert alert-danger" role="alert"><%= mensagemErro %></div>
+    <% } %>

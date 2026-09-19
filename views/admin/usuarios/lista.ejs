@@ -1,0 +1,64 @@
+<%- include('../../layouts/topo') %>
+
+<div class="mb-3">
+  <h1 class="mb-1">Usuários</h1>
+  <p class="text-body-secondary mb-0">As contas são criadas pelo cadastro do site. Aqui você define o papel de cada pessoa e o perfil de artista vinculado.</p>
+</div>
+
+<% if (usuarios.length === 0) { %>
+  <div class="alert alert-secondary">Nenhum usuário cadastrado.</div>
+<% } else { %>
+  <div class="card shadow-sm">
+    <div class="table-responsive" role="region" aria-labelledby="legenda-usuarios" tabindex="0">
+      <table class="table table-hover align-middle mb-0">
+        <caption id="legenda-usuarios" class="visually-hidden">Lista de usuários cadastrados</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col" class="d-none d-md-table-cell">E-mail</th>
+            <th scope="col">Papel</th>
+            <th scope="col" class="d-none d-lg-table-cell">Perfil de artista</th>
+            <th scope="col" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach((item) => { %>
+            <% const ehVoce = item.id === usuario.id; %>
+            <tr>
+              <td>
+                <%= item.nome %>
+                <% if (ehVoce) { %><span class="badge text-bg-light border ms-1">Você</span><% } %>
+                <div class="small text-body-secondary text-break d-md-none"><%= item.email %></div>
+              </td>
+              <td class="d-none d-md-table-cell text-break"><%= item.email %></td>
+              <td><%- include('../../partials/papel', { papel: item.papel }) %></td>
+              <td class="d-none d-lg-table-cell">
+                <% if (item.participante_id) { %>
+                  <a href="/participantes/<%= item.participante_id %>"><%= item.participante_exibicao %></a>
+                <% } else { %>
+                  <span class="text-body-secondary">Nenhum</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (!ehVoce) { %>
+                  <div class="d-flex flex-wrap justify-content-end gap-2">
+                    <a class="btn btn-outline-primary btn-sm" href="/admin/usuarios/<%= item.id %>/editar">
+                      Editar<span class="visually-hidden"> acesso de <%= item.nome %></span>
+                    </a>
+                    <form class="m-0" method="post" action="/admin/usuarios/<%= item.id %>/excluir" data-confirmar="Deseja excluir a conta de <%= item.nome %>? O perfil de artista vinculado, se existir, será mantido.">
+                      <button type="submit" class="btn btn-danger btn-sm">
+                        Excluir<span class="visually-hidden"> conta de <%= item.nome %></span>
+                      </button>
+                    </form>
+                  </div>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../../layouts/rodape') %>

@@ -1,0 +1,64 @@
+<%- include('../../layouts/topo') %>
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+  <h1 class="mb-0">Participantes</h1>
+  <a class="btn btn-primary" href="/admin/participantes/novo">Novo participante</a>
+</div>
+
+<% if (participantes.length === 0) { %>
+  <div class="alert alert-secondary">Nenhum participante cadastrado.</div>
+<% } else { %>
+  <div class="card shadow-sm">
+    <div class="table-responsive" role="region" aria-labelledby="legenda-participantes" tabindex="0">
+      <table class="table table-hover align-middle mb-0">
+        <caption id="legenda-participantes" class="visually-hidden">Lista de participantes cadastrados</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col" class="d-none d-md-table-cell">Nome artístico</th>
+            <th scope="col" class="d-none d-md-table-cell">Categoria</th>
+            <th scope="col" class="d-none d-lg-table-cell">Apresentações</th>
+            <th scope="col" class="d-none d-xl-table-cell">Conta</th>
+            <th scope="col" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% participantes.forEach((participante) => { %>
+            <tr>
+              <td>
+                <a href="/participantes/<%= participante.id %>"><%= participante.nome %></a>
+                <div class="small text-body-secondary d-md-none">
+                  <% if (participante.nome_artistico) { %><%= participante.nome_artistico %>, <% } %><%= participante.categoria %>
+                </div>
+              </td>
+              <td class="d-none d-md-table-cell"><%= participante.nome_artistico || '' %></td>
+              <td class="d-none d-md-table-cell"><%= participante.categoria %></td>
+              <td class="d-none d-lg-table-cell"><%= participante.total_apresentacoes %></td>
+              <td class="d-none d-xl-table-cell text-break">
+                <% if (participante.conta_email) { %>
+                  <%= participante.conta_email %>
+                <% } else { %>
+                  <span class="text-body-secondary">Sem conta</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                  <a class="btn btn-outline-primary btn-sm" href="/admin/participantes/<%= participante.id %>/editar">
+                    Editar<span class="visually-hidden"> <%= nomeExibicao(participante) %></span>
+                  </a>
+                  <form class="m-0" method="post" action="/admin/participantes/<%= participante.id %>/excluir" data-confirmar="Deseja excluir o participante <%= nomeExibicao(participante) %>?">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      Excluir<span class="visually-hidden"> <%= nomeExibicao(participante) %></span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../../layouts/rodape') %>

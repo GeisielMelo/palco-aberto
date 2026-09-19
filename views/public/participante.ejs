@@ -1,0 +1,88 @@
+<%- include('../layouts/topo') %>
+
+<article>
+  <header class="row g-3 align-items-center mb-4">
+    <div class="col-3 col-sm-2 col-lg-1">
+      <div class="ratio ratio-1x1">
+        <span class="d-flex align-items-center justify-content-center rounded-circle bg-dark text-warning fw-bold fs-4" aria-hidden="true"><%= iniciais(nomeExibicao(participante)) %></span>
+      </div>
+    </div>
+    <div class="col">
+      <h1 class="mb-2"><%= nomeExibicao(participante) %></h1>
+      <span class="badge rounded-pill text-bg-primary fs-6"><%= participante.categoria %></span>
+    </div>
+  </header>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <section class="card shadow-sm mb-4" aria-labelledby="titulo-sobre">
+        <div class="card-body">
+          <h2 id="titulo-sobre" class="h5 mb-3">Sobre</h2>
+          <dl class="row mb-0">
+            <dt class="col-sm-5">Nome</dt>
+            <dd class="col-sm-7"><%= participante.nome %></dd>
+            <dt class="col-sm-5">Nome artístico</dt>
+            <dd class="col-sm-7"><%= participante.nome_artistico || 'Não informado' %></dd>
+            <dt class="col-sm-5">Categoria</dt>
+            <dd class="col-sm-7 mb-0"><%= participante.categoria %></dd>
+          </dl>
+          <% if (participante.descricao) { %>
+            <p class="border-top pt-3 mt-3 mb-0"><%= participante.descricao %></p>
+          <% } %>
+        </div>
+      </section>
+
+      <section class="card shadow-sm" aria-labelledby="titulo-redes">
+        <div class="card-body">
+          <h2 id="titulo-redes" class="h5 mb-3">Redes sociais</h2>
+          <% if (!participante.instagram && !participante.youtube) { %>
+            <p class="text-body-secondary mb-0">Nenhuma rede social informada.</p>
+          <% } else { %>
+            <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+              <% if (participante.instagram) { %>
+                <li><a class="btn btn-outline-primary" href="<%= linkInstagram(participante.instagram) %>" rel="noopener">Instagram</a></li>
+              <% } %>
+              <% if (participante.youtube) { %>
+                <li><a class="btn btn-outline-danger" href="<%= linkYoutube(participante.youtube) %>" rel="noopener">YouTube</a></li>
+              <% } %>
+            </ul>
+          <% } %>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-7">
+      <section aria-labelledby="titulo-apresentacoes">
+        <h2 id="titulo-apresentacoes" class="h4 mb-3">Apresentações</h2>
+        <% if (apresentacoes.length === 0) { %>
+          <div class="alert alert-secondary">Nenhuma apresentação cadastrada para este participante.</div>
+        <% } else { %>
+          <ul class="list-unstyled d-grid gap-3 mb-0">
+            <% apresentacoes.forEach((item) => { %>
+              <li class="card shadow-sm border-0 border-start border-4 <%= item.evento_data < hoje ? 'border-secondary' : 'border-primary' %>">
+                <div class="card-body">
+                  <p class="mb-1">
+                    <time class="fw-bold text-primary-emphasis me-2" datetime="<%= item.evento_data %>"><%= formatarData(item.evento_data) %></time>
+                    <span class="fw-semibold"><time><%= item.horario_inicio %></time> - <time><%= item.horario_fim %></time></span>
+                    <% if (item.evento_data < hoje) { %>
+                      <span class="badge text-bg-secondary ms-1">Realizada</span>
+                    <% } %>
+                  </p>
+                  <h3 class="h5 mb-1">
+                    <a class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-100-hover" href="/eventos/<%= item.evento_id %>"><%= item.evento_nome %></a>
+                  </h3>
+                  <p class="text-body-secondary mb-0"><%= item.evento_local %></p>
+                  <p class="small fw-semibold mb-0"><%= item.palco %></p>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    </div>
+  </div>
+
+  <a class="btn btn-outline-secondary mt-4" href="/participantes">Voltar para os participantes</a>
+</article>
+
+<%- include('../layouts/rodape') %>

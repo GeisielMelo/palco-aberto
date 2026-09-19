@@ -1,0 +1,12 @@
+<%- include('layouts/topo') %>
+
+<% const voltarAoPainel = area === 'admin' && usuario && usuario.papel === PAPEIS.ADMIN; %>
+<section class="py-5 text-center">
+  <h1 class="mb-3"><%= titulo %></h1>
+  <p class="lead text-body-secondary mb-4"><%= mensagem %></p>
+  <a class="btn btn-primary" href="<%= voltarAoPainel ? '/admin' : '/' %>">
+    <%= voltarAoPainel ? 'Voltar ao painel' : 'Voltar para a página inicial' %>
+  </a>
+</section>
+
+<%- include('layouts/rodape') %>

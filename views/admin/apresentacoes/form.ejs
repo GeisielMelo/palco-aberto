@@ -1,0 +1,67 @@
+<%- include('../../layouts/topo') %>
+
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="mb-3"><%= titulo %></h1>
+
+    <% if (eventos.length === 0 || participantes.length === 0) { %>
+      <div class="alert alert-warning" role="alert">
+        <p class="mb-2">Para cadastrar uma apresentação é preciso ter pelo menos um evento e um participante.</p>
+        <div class="d-flex flex-wrap gap-3">
+          <% if (eventos.length === 0) { %><a class="alert-link" href="/admin/eventos/novo">Cadastrar evento</a><% } %>
+          <% if (participantes.length === 0) { %><a class="alert-link" href="/admin/participantes/novo">Cadastrar participante</a><% } %>
+        </div>
+      </div>
+    <% } else { %>
+      <%- include('../../partials/erros') %>
+
+      <form method="post" action="<%= acao %>" class="card shadow-sm">
+        <div class="card-body p-3 p-md-4">
+          <p class="form-text mt-0 mb-3">Todos os campos são obrigatórios.</p>
+
+          <div class="mb-3">
+            <label for="evento_id" class="form-label fw-semibold">Evento</label>
+            <select id="evento_id" name="evento_id" class="form-select" required>
+              <option value="">Selecione um evento</option>
+              <% eventos.forEach((evento) => { %>
+                <option value="<%= evento.id %>"<%= String(apresentacao.evento_id) === String(evento.id) ? ' selected' : '' %>><%= evento.nome %> (<%= formatarData(evento.data) %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="participante_id" class="form-label fw-semibold">Participante</label>
+            <select id="participante_id" name="participante_id" class="form-select" required>
+              <option value="">Selecione um participante</option>
+              <% participantes.forEach((participante) => { %>
+                <option value="<%= participante.id %>"<%= String(apresentacao.participante_id) === String(participante.id) ? ' selected' : '' %>><%= nomeExibicao(participante) %> (<%= participante.categoria %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+              <label for="horario_inicio" class="form-label fw-semibold">Horário inicial</label>
+              <input id="horario_inicio" name="horario_inicio" type="time" class="form-control" required value="<%= apresentacao.horario_inicio || '' %>">
+            </div>
+            <div class="col-6 col-md-3">
+              <label for="horario_fim" class="form-label fw-semibold">Horário final</label>
+              <input id="horario_fim" name="horario_fim" type="time" class="form-control" required value="<%= apresentacao.horario_fim || '' %>">
+            </div>
+            <div class="col-md-6">
+              <label for="palco" class="form-label fw-semibold">Palco</label>
+              <input id="palco" name="palco" type="text" class="form-control" maxlength="80" required value="<%= apresentacao.palco || '' %>">
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 d-sm-flex mt-4">
+            <button type="submit" class="btn btn-primary">Salvar apresentação</button>
+            <a class="btn btn-outline-secondary" href="/admin/apresentacoes">Cancelar</a>
+          </div>
+        </div>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../../layouts/rodape') %>

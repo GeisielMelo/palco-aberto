@@ -1,0 +1,58 @@
+<%- include('../../layouts/topo') %>
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+  <h1 class="mb-0">Apresentações</h1>
+  <a class="btn btn-primary" href="/admin/apresentacoes/nova">Nova apresentação</a>
+</div>
+
+<% if (apresentacoes.length === 0) { %>
+  <div class="alert alert-secondary">Nenhuma apresentação cadastrada.</div>
+<% } else { %>
+  <div class="card shadow-sm">
+    <div class="table-responsive" role="region" aria-labelledby="legenda-apresentacoes" tabindex="0">
+      <table class="table table-hover align-middle mb-0">
+        <caption id="legenda-apresentacoes" class="visually-hidden">Lista de apresentações cadastradas</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="d-none d-md-table-cell">Evento</th>
+            <th scope="col" class="d-none d-md-table-cell">Data</th>
+            <th scope="col">Horário</th>
+            <th scope="col">Participante</th>
+            <th scope="col" class="d-none d-lg-table-cell">Palco</th>
+            <th scope="col" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% apresentacoes.forEach((item) => { %>
+            <tr>
+              <td class="d-none d-md-table-cell"><a href="/eventos/<%= item.evento_id %>"><%= item.evento_nome %></a></td>
+              <td class="d-none d-md-table-cell text-nowrap"><%= formatarData(item.evento_data) %></td>
+              <td class="text-nowrap fw-semibold"><%= item.horario_inicio %> - <%= item.horario_fim %></td>
+              <td>
+                <a href="/participantes/<%= item.participante_id %>"><%= item.participante_exibicao %></a>
+                <div class="small text-body-secondary d-lg-none">
+                  <span class="d-md-none"><%= item.evento_nome %>, <%= formatarData(item.evento_data) %>, </span><%= item.palco %>
+                </div>
+              </td>
+              <td class="d-none d-lg-table-cell"><%= item.palco %></td>
+              <td>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                  <a class="btn btn-outline-primary btn-sm" href="/admin/apresentacoes/<%= item.id %>/editar">
+                    Editar<span class="visually-hidden"> apresentação de <%= item.participante_exibicao %></span>
+                  </a>
+                  <form class="m-0" method="post" action="/admin/apresentacoes/<%= item.id %>/excluir" data-confirmar="Deseja excluir a apresentação de <%= item.participante_exibicao %> às <%= item.horario_inicio %>?">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      Excluir<span class="visually-hidden"> apresentação de <%= item.participante_exibicao %></span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../../layouts/rodape') %>

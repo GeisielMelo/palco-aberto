@@ -1,0 +1,50 @@
+<%- include('../layouts/topo') %>
+
+<div class="row justify-content-center">
+  <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+    <div class="card border-0 shadow">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span class="d-inline-flex align-items-center justify-content-center bg-warning text-dark rounded-3 px-3 py-2 fs-3 mb-3" aria-hidden="true">
+            <i class="bi bi-mic-fill"></i>
+          </span>
+          <h1 class="h3 fw-bold mb-1">Criar conta</h1>
+          <p class="text-body-secondary mb-0">Com uma conta você pode criar o seu perfil de artista.</p>
+        </div>
+
+        <%- include('../partials/erros') %>
+
+        <form method="post" action="/cadastro">
+          <div class="mb-3">
+            <label for="nome" class="form-label fw-semibold">Nome</label>
+            <input id="nome" name="nome" type="text" class="form-control" maxlength="120" autocomplete="name" required value="<%= valores.nome || '' %>">
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">E-mail</label>
+            <input id="email" name="email" type="email" class="form-control" maxlength="160" autocomplete="email" required value="<%= valores.email || '' %>">
+          </div>
+
+          <div class="mb-3">
+            <label for="senha" class="form-label fw-semibold">Senha</label>
+            <input id="senha" name="senha" type="password" class="form-control" minlength="6" maxlength="72" autocomplete="new-password" aria-describedby="dica-senha" required>
+            <div id="dica-senha" class="form-text">Mínimo de 6 caracteres.</div>
+          </div>
+
+          <div class="mb-4">
+            <label for="confirmacao" class="form-label fw-semibold">Confirme a senha</label>
+            <input id="confirmacao" name="confirmacao" type="password" class="form-control" minlength="6" maxlength="72" autocomplete="new-password" required>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Criar conta</button>
+          </div>
+        </form>
+
+        <p class="text-center border-top pt-4 mt-4 mb-0">Já tem conta? <a href="/entrar">Entre por aqui</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/rodape') %>

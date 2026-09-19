@@ -1,0 +1,113 @@
+<%- include('../layouts/topo') %>
+
+<article>
+  <header class="bg-dark text-white rounded-3 p-4 p-md-5 mb-4" data-bs-theme="dark">
+    <h1 class="display-5 fw-bold text-uppercase mb-2"><%= evento.nome %></h1>
+    <p class="fs-5 fw-bold text-warning mb-1"><time datetime="<%= evento.data %>"><%= formatarData(evento.data) %></time></p>
+    <p class="fs-5 mb-0"><%= evento.local %></p>
+    <% if (evento.descricao) { %>
+      <p class="col-lg-8 mt-3 mb-0 text-white-50"><%= evento.descricao %></p>
+    <% } %>
+  </header>
+
+  <section class="mb-5" aria-label="Situação da programação">
+    <% if (situacao.tipo === 'vazia') { %>
+      <div class="alert alert-secondary mb-0">A programação deste evento ainda não foi divulgada.</div>
+    <% } else if (situacao.tipo === 'encerrada') { %>
+      <div class="alert alert-secondary mb-0">A programação deste evento foi encerrada. Obrigado a todos que participaram.</div>
+    <% } else { %>
+      <% if (situacao.tipo === 'futura') { %>
+        <div class="alert alert-info">A programação começa em <%= formatarData(evento.data) %>.</div>
+      <% } else if (!situacao.atual) { %>
+        <div class="alert alert-secondary">Nenhuma apresentação está acontecendo neste momento.</div>
+      <% } %>
+
+      <div class="row g-3">
+        <% if (situacao.atual) { %>
+          <div class="col-md-6">
+            <div class="card h-100 text-bg-dark border-0 shadow">
+              <div class="card-body p-4">
+                <h2 class="h6 text-uppercase fw-bold text-warning mb-3">
+                  <span class="spinner-grow spinner-grow-sm me-2" aria-hidden="true"></span>Agora
+                </h2>
+                <p class="h3 fw-bold mb-1">
+                  <a class="link-light link-underline-opacity-0 link-underline-opacity-100-hover" href="/participantes/<%= situacao.atual.participante_id %>"><%= situacao.atual.participante_exibicao %></a>
+                </p>
+                <p class="text-white-50 mb-1"><%= situacao.atual.participante_categoria %></p>
+                <p class="text-white-50 mb-2"><%= situacao.atual.palco %></p>
+                <p class="fs-4 fw-bold text-warning mb-0">
+                  <time><%= situacao.atual.horario_inicio %></time> - <time><%= situacao.atual.horario_fim %></time>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+
+        <% if (situacao.proxima) { %>
+          <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <h2 class="h6 text-uppercase fw-bold text-primary-emphasis mb-3">Próxima</h2>
+                <p class="h3 fw-bold mb-1">
+                  <a class="link-primary link-underline-opacity-0 link-underline-opacity-100-hover" href="/participantes/<%= situacao.proxima.participante_id %>"><%= situacao.proxima.participante_exibicao %></a>
+                </p>
+                <p class="text-body-secondary mb-1"><%= situacao.proxima.participante_categoria %></p>
+                <p class="text-body-secondary mb-2"><%= situacao.proxima.palco %></p>
+                <p class="fs-4 fw-bold mb-0">
+                  <time><%= situacao.proxima.horario_inicio %></time> - <time><%= situacao.proxima.horario_fim %></time>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } else if (situacao.atual) { %>
+          <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <h2 class="h6 text-uppercase fw-bold text-primary-emphasis mb-3">Próxima</h2>
+                <p class="mb-0">Esta é a última apresentação da programação.</p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  </section>
+
+  <section class="mb-4" aria-labelledby="titulo-programacao">
+    <h2 id="titulo-programacao" class="h4 mb-3">Programação</h2>
+    <% if (programacao.length === 0) { %>
+      <div class="alert alert-secondary">Nenhuma apresentação cadastrada para este evento.</div>
+    <% } else { %>
+      <ol class="list-unstyled d-grid gap-3 mb-4">
+        <% programacao.forEach((item) => { %>
+          <% const acontecendo = situacao.atual && situacao.atual.id === item.id; %>
+          <li class="card shadow-sm border-0 border-start border-4 <%= acontecendo ? 'border-warning bg-warning-subtle' : 'border-primary' %>">
+            <div class="card-body">
+              <div class="row g-2 align-items-start">
+                <div class="col-sm-4 col-md-3">
+                  <p class="fs-5 fw-bold text-primary-emphasis mb-1">
+                    <time><%= item.horario_inicio %></time> - <time><%= item.horario_fim %></time>
+                  </p>
+                  <% if (acontecendo) { %>
+                    <span class="badge text-bg-warning text-uppercase">Agora</span>
+                  <% } %>
+                </div>
+                <div class="col-sm-8 col-md-9">
+                  <h3 class="h5 mb-1">
+                    <a class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-100-hover" href="/participantes/<%= item.participante_id %>"><%= item.participante_exibicao %></a>
+                  </h3>
+                  <p class="text-body-secondary mb-0"><%= item.participante_categoria %></p>
+                  <p class="small fw-semibold mb-0"><%= item.palco %></p>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% }) %>
+      </ol>
+    <% } %>
+  </section>
+
+  <a class="btn btn-outline-secondary" href="/">Voltar para os eventos</a>
+</article>
+
+<%- include('../layouts/rodape') %>
